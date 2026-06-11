@@ -1,3 +1,369 @@
+🔐 A Importância da Segurança AWS
+
+Implementação de Controles de Segurança para uma Farmácia em Ambiente Cloud
+
+"AWS" (https://img.shields.io/badge/AWS-Cloud-orange)
+"Security" (https://img.shields.io/badge/Security-Best_Practices-green)
+"Cloud Practitioner" (https://img.shields.io/badge/AWS-Cloud_Practitioner-blue)
+"Status" (https://img.shields.io/badge/Status-Concluído-success)
+
+---
+
+📖 Sobre o Projeto
+
+A segurança da informação é um dos pilares fundamentais da computação em nuvem.
+
+Este projeto foi desenvolvido como parte da formação AWS Cloud Practitioner Certification, com o objetivo de demonstrar a aplicação prática de serviços AWS voltados para proteção de ambientes corporativos.
+
+O cenário proposto considera uma farmácia fictícia chamada Farmácia VidaPlus, que armazena informações sensíveis de clientes, receitas médicas, dados financeiros e registros operacionais.
+
+A missão deste projeto é identificar riscos de segurança e implementar controles capazes de aumentar a proteção dos ativos digitais da organização utilizando serviços nativos da AWS.
+
+---
+
+🎯 Objetivo
+
+Projetar uma estratégia de segurança baseada em três serviços essenciais da AWS:
+
+- AWS IAM
+- AWS Security Hub
+- AWS CloudTrail
+
+A solução busca garantir:
+
+- Controle de acesso seguro
+- Monitoramento contínuo
+- Auditoria completa
+- Conformidade regulatória
+- Proteção de dados sensíveis
+
+---
+
+🏥 Cenário de Negócio
+
+Empresa
+
+Farmácia VidaPlus
+
+Segmento
+
+Varejo Farmacêutico
+
+Desafio
+
+A organização enfrenta desafios relacionados à:
+
+- Controle inadequado de acessos
+- Falta de rastreabilidade
+- Ausência de monitoramento centralizado
+- Necessidade de adequação à LGPD
+- Crescimento acelerado do ambiente digital
+
+---
+
+🚨 Problemas Identificados
+
+1. Permissões Excessivas
+
+Usuários possuíam acesso além do necessário para execução de suas atividades.
+
+Impacto
+
+- Acesso indevido
+- Alterações não autorizadas
+- Exclusão acidental de recursos
+
+---
+
+2. Falta de Visibilidade
+
+Eventos de segurança estavam distribuídos em múltiplos serviços.
+
+Impacto
+
+- Detecção tardia de incidentes
+- Dificuldade de investigação
+
+---
+
+3. Ausência de Auditoria Completa
+
+Não existia trilha confiável de auditoria.
+
+Impacto
+
+- Não conformidade
+- Dificuldade em identificar responsáveis por alterações
+
+---
+
+🛠️ Serviços AWS Utilizados
+
+AWS IAM
+
+Responsável pelo gerenciamento de identidades e permissões.
+
+Implementações
+
+- Grupos de usuários
+- Políticas baseadas em função
+- MFA obrigatório
+- Princípio do menor privilégio
+
+Benefícios
+
+✅ Redução de riscos internos
+
+✅ Controle granular de acesso
+
+✅ Maior governança
+
+---
+
+AWS Security Hub
+
+Centralização de descobertas de segurança.
+
+Implementações
+
+- Consolidação de alertas
+- Monitoramento contínuo
+- Avaliação de conformidade
+
+Benefícios
+
+✅ Visão única do ambiente
+
+✅ Resposta rápida a incidentes
+
+✅ Melhoria da postura de segurança
+
+---
+
+AWS CloudTrail
+
+Auditoria e rastreabilidade.
+
+Implementações
+
+- Registro de eventos
+- Armazenamento seguro de logs
+- Integração com monitoramento
+
+Benefícios
+
+✅ Investigação facilitada
+
+✅ Evidências para auditoria
+
+✅ Conformidade regulatória
+
+---
+
+🏗️ Arquitetura da Solução
+
+                   +--------------------+
+                   |     Usuários       |
+                   +---------+----------+
+                             |
+                             v
+                   +--------------------+
+                   |      AWS IAM       |
+                   +---------+----------+
+                             |
+                             v
+                   +--------------------+
+                   | Aplicações AWS     |
+                   +---------+----------+
+                             |
+          +------------------+------------------+
+          |                                     |
+          v                                     v
++--------------------+              +--------------------+
+| AWS Security Hub   |              | AWS CloudTrail     |
++--------------------+              +--------------------+
+          |                                     |
+          +------------------+------------------+
+                             |
+                             v
+                   +--------------------+
+                   | Monitoramento      |
+                   | Auditoria          |
+                   +--------------------+
+
+---
+
+📂 Estrutura do Repositório
+
+a-Importancia-da-seguranca-AWS/
+│
+├── README.md
+│
+├── docs/
+│   ├── business-value.md
+│   ├── architecture.md
+│   ├── implementation-report.md
+│   ├── security-analysis.md
+│   └── shared-responsibility-model.md
+│
+├── diagrams/
+│   ├── architecture.png
+│   └── security-workflow.png
+│
+├── assets/
+│   ├── capa-projeto.png
+│   ├── aws-security-banner.png
+│   └── screenshots/
+│
+└── LICENSE
+
+---
+
+🔒 Princípios de Segurança Aplicados
+
+O projeto foi desenvolvido considerando os pilares fundamentais da Segurança da Informação.
+
+Confidencialidade
+
+Garantir acesso apenas a usuários autorizados.
+
+Integridade
+
+Proteger dados contra alterações indevidas.
+
+Disponibilidade
+
+Garantir acesso contínuo aos sistemas.
+
+Não Repúdio
+
+Registrar e rastrear todas as ações realizadas.
+
+---
+
+☁️ Modelo de Responsabilidade Compartilhada
+
+Uma das competências fundamentais para profissionais AWS é compreender o modelo de responsabilidade compartilhada.
+
+AWS é responsável por
+
+- Data Centers
+- Hardware
+- Rede Física
+- Virtualização
+- Infraestrutura Global
+
+Cliente é responsável por
+
+- Usuários
+- Permissões
+- Dados
+- Configuração dos serviços
+- Criptografia
+- Governança
+
+Este projeto concentra-se exatamente na camada de responsabilidade do cliente.
+
+---
+
+📊 Benefícios Esperados
+
+Operacionais
+
+- Redução de erros humanos
+- Monitoramento contínuo
+- Melhor governança
+
+Financeiros
+
+- Redução de custos com incidentes
+- Menor risco de multas
+- Melhor utilização da equipe de TI
+
+Estratégicos
+
+- Proteção da reputação
+- Aumento da confiança dos clientes
+- Escalabilidade segura
+
+---
+
+📈 Indicadores de Sucesso
+
+Indicador| Meta
+MFA habilitado| 100%
+Usuários com privilégios excessivos| 0
+Eventos auditados| 100%
+Cobertura de monitoramento| 100%
+Tempo de resposta a incidentes| < 30 min
+
+---
+
+🎓 Competências Demonstradas
+
+Este projeto evidencia conhecimentos em:
+
+- Cloud Computing
+- AWS Security
+- AWS IAM
+- AWS CloudTrail
+- AWS Security Hub
+- Governança Cloud
+- Compliance
+- LGPD
+- Gestão de Riscos
+- Arquitetura de Segurança
+
+---
+
+🚀 Possíveis Evoluções
+
+Em ambientes corporativos reais a solução poderia ser expandida utilizando:
+
+- AWS GuardDuty
+- AWS Inspector
+- AWS Config
+- AWS WAF
+- AWS Shield
+- AWS Control Tower
+- AWS Organizations
+- Amazon Macie
+
+---
+
+👨‍💻 Autor
+
+Sérgio Santos
+
+Profissional de Tecnologia da Informação com experiência em:
+
+- Análise de Sistemas
+- Desenvolvimento de Software
+- Infraestrutura
+- Segurança da Informação
+- Computação em Nuvem
+
+Formação AWS Cloud Practitioner Certification.
+
+---
+
+📜 Licença
+
+Projeto desenvolvido para fins educacionais e demonstração de competências em AWS Cloud Security.
+
+MIT License.
+
+
+
+
+
+
+
+---
+---
+
+
+
 # Case Corporativo: Arquitetura de Segurança AWS — Farmácia Vida+
 
 **Foco em Governança, Compliance (LGPD) e Mitigação de Riscos de Negócio**
