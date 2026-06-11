@@ -1,0 +1,22 @@
+Usuários
+    │
+    ▼
+IAM + MFA
+    │
+    ▼
+Aplicações AWS
+    │
+ ┌──┼─────┐
+ ▼  ▼     ▼
+EC2 S3   RDS
+ │   │     │
+ └───┴─────┘
+      │
+      ▼
+ CloudTrail
+      │
+      ▼
+ GuardDuty
+      │
+      ▼
+ Alertas
