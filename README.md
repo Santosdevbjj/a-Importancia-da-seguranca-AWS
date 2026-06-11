@@ -2,6 +2,7 @@
 
 Implementação de Controles de Segurança para uma Farmácia em Ambiente Cloud
 
+
 "AWS" (https://img.shields.io/badge/AWS-Cloud-orange)
 "Security" (https://img.shields.io/badge/Security-Best_Practices-green)
 "Cloud Practitioner" (https://img.shields.io/badge/AWS-Cloud_Practitioner-blue)
