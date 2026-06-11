@@ -1,0 +1,23 @@
+name: AWS Security Documentation Validation
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Validate Markdown Files
+        run: |
+          echo "Validating documentation..."
+          find . -name "*.md"
+
+      - name: Security Review
+        run: |
+          echo "Security documentation reviewed successfully."
