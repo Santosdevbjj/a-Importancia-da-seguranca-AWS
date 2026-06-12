@@ -1,3 +1,10 @@
+## Formação AWS Cloud Practitioner Certification.
+
+<img width="122" height="120" alt="1000127470" src="https://github.com/user-attachments/assets/247283ce-652e-4c63-bca2-96be7d521bf1" />
+
+
+---
+
 # 🔐 A Importância da Segurança AWS — Postura de Segurança para Farmácia Vida+
 
 **Implementação de Controles de Identidade, Proteção de Dados e Detecção de Ameaças em Ambiente AWS, com foco em conformidade LGPD**
