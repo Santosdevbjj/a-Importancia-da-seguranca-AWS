@@ -1,413 +1,239 @@
-## Formação AWS Cloud Practitioner Certification.
+# 🔐 A Importância da Segurança AWS — Postura de Segurança para Farmácia Vida+
 
-<img width="122" height="120" alt="1000127470" src="https://github.com/user-attachments/assets/30bc674a-68d1-4fcb-ae8d-bed9baca297e" />
+**Implementação de Controles de Identidade, Proteção de Dados e Detecção de Ameaças em Ambiente AWS, com foco em conformidade LGPD**
 
-
----
-
-## 🔐 A Importância da Segurança AWS
-
-Implementação de Controles de Segurança para uma Farmácia em Ambiente Cloud
-
-
-"AWS" (https://img.shields.io/badge/AWS-Cloud-orange)
-"Security" (https://img.shields.io/badge/Security-Best_Practices-green)
-"Cloud Practitioner" (https://img.shields.io/badge/AWS-Cloud_Practitioner-blue)
-"Status" (https://img.shields.io/badge/Status-Concluído-success)
+![AWS](https://img.shields.io/badge/AWS-Cloud-orange)
+![Security](https://img.shields.io/badge/Security-Best_Practices-green)
+![Cloud Practitioner](https://img.shields.io/badge/AWS-Cloud_Practitioner-blue)
+![Compliance](https://img.shields.io/badge/LGPD-Compliance-purple)
+![Status](https://img.shields.io/badge/Status-Concluído-success)
 
 ---
 
-📖 Sobre o Projeto
+## 1. Problema de Negócio
 
-A segurança da informação é um dos pilares fundamentais da computação em nuvem.
+A **Farmácia Vida+** (rede varejista farmacêutica com operação híbrida — e-commerce e lojas físicas) migrou seu sistema de vendas e prontuários eletrônicos para a AWS. Por armazenar dados sensíveis de saúde (receitas médicas, CPFs vinculados a medicamentos controlados e histórico clínico), a empresa se tornou um alvo crítico para vazamento de dados e ataques de ransomware.
 
-Este projeto foi desenvolvido como parte da formação AWS Cloud Practitioner Certification, com o objetivo de demonstrar a aplicação prática de serviços AWS voltados para proteção de ambientes corporativos.
+O risco real não é apenas técnico: é regulatório e financeiro. A LGPD prevê sanções de até **2% do faturamento por infração**, e qualquer indisponibilidade do sistema de vendas paralisa simultaneamente o e-commerce e os caixas das lojas físicas.
 
-O cenário proposto considera uma farmácia fictícia chamada Farmácia VidaPlus, que armazena informações sensíveis de clientes, receitas médicas, dados financeiros e registros operacionais.
-
-A missão deste projeto é identificar riscos de segurança e implementar controles capazes de aumentar a proteção dos ativos digitais da organização utilizando serviços nativos da AWS.
+Este projeto responde à pergunta central: **como reduzir, com três controles AWS priorizados, a exposição a vazamento de dados, sequestro de credenciais e indisponibilidade operacional — sem adicionar complexidade desproporcional ao porte da empresa?**
 
 ---
 
-🎯 Objetivo
+## 2. Contexto e Baseline (Cenário Atual)
 
-Projetar uma estratégia de segurança baseada em três serviços essenciais da AWS:
+Antes da implementação, o ambiente da Vida+ apresentava três fragilidades estruturais:
 
-- AWS IAM
-- AWS Security Hub
-- AWS CloudTrail
+| Dimensão | Situação Atual (Baseline) |
+|---|---|
+| **Identidade** | Contas IAM compartilhadas entre funcionários, sem MFA ativo. Desenvolvedores com `AdministratorAccess` permanente. |
+| **Dados** | Receitas médicas armazenadas em buckets S3 sem criptografia forçada no servidor e com políticas de acesso excessivamente abertas. |
+| **Visibilidade** | Nenhum monitoramento centralizado. Detecção de incidentes é puramente reativa — depende de relato manual. |
 
-A solução busca garantir:
-
-- Controle de acesso seguro
-- Monitoramento contínuo
-- Auditoria completa
-- Conformidade regulatória
-- Proteção de dados sensíveis
+Esse baseline é o ponto de comparação para medir o impacto de cada medida implementada nas seções seguintes.
 
 ---
 
-🏥 Cenário de Negócio
+## 3. Premissas
 
-Empresa
-
-Farmácia VidaPlus
-
-Segmento
-
-Varejo Farmacêutico
-
-Desafio
-
-A organização enfrenta desafios relacionados à:
-
-- Controle inadequado de acessos
-- Falta de rastreabilidade
-- Ausência de monitoramento centralizado
-- Necessidade de adequação à LGPD
-- Crescimento acelerado do ambiente digital
+- O escopo considera **1 conta AWS de produção**, região `us-east-1`.
+- O Modelo de Responsabilidade Compartilhada da AWS é o ponto de partida: a AWS cobre a infraestrutura física; a Vida+ é responsável pela configuração de identidade, dados e monitoramento.
+- As três medidas foram selecionadas por critério de **maior redução de risco por menor esforço de implementação**, adequado a uma farmácia de médio porte (não uma operação enterprise multi-conta).
+- Dados de receitas médicas e fiscais possuem exigência de retenção mínima de 5 anos para fins de auditoria.
 
 ---
 
-🚨 Problemas Identificados
+## 4. Estratégia da Solução — Arquitetura
 
-1. Permissões Excessivas
+```
+Usuários
+   │
+   ▼
+AWS IAM + MFA (Identidade)
+   │
+   ▼
+Recursos AWS
+┌─────────┬─────────┬─────────┐
+│   EC2   │   S3     │   RDS   │
+└─────────┴─────────┴─────────┘
+   │
+   ▼
+AWS CloudTrail (Auditoria imutável)
+   │
+   ▼
+AWS GuardDuty + Prowler (Detecção e Compliance)
+   │
+   ▼
+EventBridge + SNS → Alertas para a equipe de TI
+```
 
-Usuários possuíam acesso além do necessário para execução de suas atividades.
-
-Impacto
-
-- Acesso indevido
-- Alterações não autorizadas
-- Exclusão acidental de recursos
-
----
-
-2. Falta de Visibilidade
-
-Eventos de segurança estavam distribuídos em múltiplos serviços.
-
-Impacto
-
-- Detecção tardia de incidentes
-- Dificuldade de investigação
-
----
-
-3. Ausência de Auditoria Completa
-
-Não existia trilha confiável de auditoria.
-
-Impacto
-
-- Não conformidade
-- Dificuldade em identificar responsáveis por alterações
+A arquitetura segue o princípio de **defesa em profundidade**: cada camada (identidade, dados, observabilidade) é independente, de forma que a falha de um controle não compromete os demais.
 
 ---
 
-🛠️ Serviços AWS Utilizados
+## 5. Decisões Técnicas e Trade-offs
 
-AWS IAM
+Esta seção documenta não apenas *o que* foi implementado, mas *por que* — incluindo as alternativas descartadas e os trade-offs conscientemente aceitos.
 
-Responsável pelo gerenciamento de identidades e permissões.
+### Medida 1 — AWS IAM com Privilégio Mínimo e MFA Obrigatório
 
-Implementações
+**O que resolve:** elimina o risco de acesso não autorizado por credenciais compartilhadas ou roubadas, e impede escalada de privilégios por funcionários de balcão ou administradores.
 
-- Grupos de usuários
-- Políticas baseadas em função
-- MFA obrigatório
-- Princípio do menor privilégio
+**Implementação:**
+- Fim das contas compartilhadas; cada colaborador possui identidade individual.
+- Políticas RBAC: farmacêuticos têm acesso de leitura às receitas; operadores de caixa apenas gravam vendas; exclusão de logs é bloqueada via Service Control Policies (SCPs) no AWS Organizations.
+- MFA obrigatório para todas as contas, com prioridade absoluta para perfis administrativos e acesso root.
 
-Benefícios
-
-✅ Redução de riscos internos
-
-✅ Controle granular de acesso
-
-✅ Maior governança
+**Alternativa considerada:** AWS IAM Identity Center (federação corporativa completa, multi-conta).
+**Racional da escolha:** para uma conta única, grupos IAM + SCPs entregam o mesmo princípio de menor privilégio com configuração mais simples e auditável, sem a sobrecarga operacional de um Identity Provider externo.
+**Trade-off aceito:** menor preparo para expansão multi-conta no curto prazo, em troca de implementação mais rápida e curva de manutenção compatível com uma equipe de TI pequena.
 
 ---
 
-AWS Security Hub
+### Medida 2 — Amazon S3: Criptografia com AWS KMS + Object Lock
 
-Centralização de descobertas de segurança.
+**O que resolve:** garante **confidencialidade** (dados ilegíveis sem a chave correta) e **integridade** (impossibilidade de alteração ou exclusão de registros, mesmo por um atacante com credenciais root comprometidas).
 
-Implementações
+**Implementação:**
+- Criptografia SSE-KMS forçada via política de bucket, com Customer Managed Keys (CMKs).
+- AWS S3 Object Lock em modo **Compliance**, com retenção de 5 anos para receitas e relatórios fiscais — bloqueio de exclusão/alteração mesmo pela conta root.
+- Bloqueio total de acesso público ao S3 em nível de conta.
 
-- Consolidação de alertas
-- Monitoramento contínuo
-- Avaliação de conformidade
-
-Benefícios
-
-✅ Visão única do ambiente
-
-✅ Resposta rápida a incidentes
-
-✅ Melhoria da postura de segurança
+**Alternativa considerada:** criptografia client-side antes do upload.
+**Racional da escolha:** SSE-KMS com CMK gera trilha de auditoria nativa de uso de chaves via CloudTrail, sem exigir que a aplicação gerencie chaves criptográficas — reduzindo superfície de erro humano.
+**Trade-off aceito:** pequeno overhead de custo e latência por chamada ao KMS, em troca de auditabilidade total e proteção definitiva contra ransomware via Object Lock.
 
 ---
 
-AWS CloudTrail
+### Medida 3 — Auditoria Contínua com Prowler + AWS Systems Manager Session Manager
 
-Auditoria e rastreabilidade.
+**O que resolve:** transforma a postura de segurança de **reativa para proativa**, identificando desvios de conformidade (CIS Benchmark, ISO 27001) antes que se tornem incidentes.
 
-Implementações
+**Implementação:**
+- Instância EC2 em sub-rede privada, com acesso administrativo via **AWS Systems Manager Session Manager** — elimina a necessidade de expor a porta SSH (22) à internet.
+- **Prowler 4.0+** integrado via script automatizado (`prowler_scan.sh`), executando varreduras semanais de conformidade.
+- AWS CloudTrail registrando todas as chamadas de API (quem, de onde, o quê, com qual resultado), com integridade validada por **S3 Log File Integrity Validation**.
+- EventBridge + SNS disparando alertas por e-mail à equipe de TI quando a pontuação de conformidade cai ou vulnerabilidades críticas são detectadas.
 
-- Registro de eventos
-- Armazenamento seguro de logs
-- Integração com monitoramento
-
-Benefícios
-
-✅ Investigação facilitada
-
-✅ Evidências para auditoria
-
-✅ Conformidade regulatória
+**Alternativa considerada:** depender exclusivamente do AWS GuardDuty (detecção comportamental baseada em ML).
+**Racional da escolha:** GuardDuty é excelente para detectar comportamento anômalo em tempo real, mas não avalia configurações estáticas contra frameworks regulatórios. O Prowler complementa essa lacuna com relatórios de compliance estruturados, prontos para auditoria.
+**Trade-off aceito:** varreduras do Prowler são periódicas (não em tempo real), em troca de cobertura ampla de configurações e relatórios diretamente utilizáveis em processos de auditoria externa.
 
 ---
 
-🏗️ Arquitetura da Solução
+## 6. Mapeamento da Tríade de Segurança (CIA + Não Repúdio)
 
-                   +--------------------+
-                   |     Usuários       |
-                   +---------+----------+
-                             |
-                             v
-                   +--------------------+
-                   |      AWS IAM       |
-                   +---------+----------+
-                             |
-                             v
-                   +--------------------+
-                   | Aplicações AWS     |
-                   +---------+----------+
-                             |
-          +------------------+------------------+
-          |                                     |
-          v                                     v
-+--------------------+              +--------------------+
-| AWS Security Hub   |              | AWS CloudTrail     |
-+--------------------+              +--------------------+
-          |                                     |
-          +------------------+------------------+
-                             |
-                             v
-                   +--------------------+
-                   | Monitoramento      |
-                   | Auditoria          |
-                   +--------------------+
+| Pilar | Risco de Negócio Associado | Serviço AWS | Mecanismo de Proteção |
+|---|---|---|---|
+| **Confidencialidade** | Vazamento de receitas médicas e dados de clientes | IAM + KMS | Acesso restrito por função + criptografia de chaves |
+| **Integridade** | Alteração fraudulenta de logs ou dados fiscais | CloudTrail (File Validation) + S3 Object Lock | Assinaturas criptográficas e imutabilidade de registros |
+| **Disponibilidade** | Paralisação do sistema de vendas por ataque direcionado | GuardDuty + Prowler | Detecção precoce de varreduras e configurações vulneráveis |
+| **Não Repúdio** | Negação de autoria de ação crítica no sistema | CloudTrail | Trilha histórica imutável vinculando identidade à ação |
 
 ---
 
-📂 Estrutura do Repositório
+## 7. Resultados e Impacto de Negócio (Business Performance)
 
+| Indicador | Antes (Baseline) | Depois (Com a Solução) |
+|---|---|---|
+| MFA habilitado | 0% | 100% |
+| Usuários com privilégios excessivos | Múltiplos (incluindo devs com AdministratorAccess) | 0 |
+| Cobertura de auditoria (CloudTrail) | Inexistente | 100% das chamadas de API |
+| Tempo de detecção de incidente | Reativo (dias) | Minutos (GuardDuty + alertas automatizados) |
+| Tempo de preparação de relatório de auditoria | Semanas | Minutos (Prowler automatizado) |
+
+**Tradução financeira do risco mitigado:**
+- **Risco regulatório:** exposição a multas de até 2% do faturamento por vazamento de dados de saúde é mitigada na camada de infraestrutura antes que o dado saia do ambiente controlado.
+- **Continuidade operacional:** com S3 Object Lock ativo, o cenário de paralisação total das lojas por ransomware — que interromperia 100% do faturamento diário das operações físicas e online — passa de risco ativo para risco residual próximo de zero.
+- **Custo de auditoria:** consolidação automatizada via Prowler reduz o esforço de preparação de evidências de conformidade de semanas-pessoa para minutos.
+
+---
+
+## 8. Modelo de Responsabilidade Compartilhada na Prática
+
+| Camada | Responsável | Aplicação no Projeto |
+|---|---|---|
+| Data centers, hardware, rede física, virtualização | **AWS** | Infraestrutura subjacente ao IAM, S3, EC2, CloudTrail e GuardDuty |
+| Configuração de IAM, criptografia (KMS), Object Lock, monitoramento e resposta a alertas | **Farmácia Vida+** | Toda a Seção 5 deste projeto |
+
+O projeto concentra-se inteiramente na camada de responsabilidade do cliente — onde, na prática, a maioria dos incidentes de segurança em nuvem se origina.
+
+---
+
+## 9. Como Executar (Templates de Infraestrutura)
+
+Os templates CloudFormation de referência estão em `/templates`:
+
+```bash
+# Habilita o CloudTrail
+aws cloudformation deploy \
+  --template-file templates/cloudtrail-template.yaml \
+  --stack-name vidaplus-cloudtrail
+
+# Habilita o GuardDuty
+aws cloudformation deploy \
+  --template-file templates/guardduty-template.yaml \
+  --stack-name vidaplus-guardduty
+
+# Habilita o Security Hub
+aws cloudformation deploy \
+  --template-file templates/securityhub-template.yaml \
+  --stack-name vidaplus-securityhub
+```
+
+**Pré-requisitos:** AWS CLI configurado com credenciais que possuam permissão para criar os recursos acima.
+
+---
+
+## 10. Estrutura do Repositório
+
+```
 a-Importancia-da-seguranca-AWS/
 │
 ├── README.md
 │
 ├── docs/
+│   ├── RELATORIO_EXECUTIVO.md
+│   ├── arquitetura-seguranca.md
+│   ├── aws-security-best-practices.md
 │   ├── business-value.md
-│   ├── architecture.md
-│   ├── implementation-report.md
-│   ├── security-analysis.md
-│   └── shared-responsibility-model.md
+│   ├── incident-response-plan.md
+│   ├── lgpd-compliance.md
+│   ├── modelo-responsabilidade-compartilhada.md
+│   └── plano-remediacao.md
 │
 ├── diagrams/
-│   ├── architecture.png
-│   └── security-workflow.png
+│   └── arquitetura.drawio
 │
-├── assets/
-│   ├── capa-projeto.png
-│   ├── aws-security-banner.png
-│   └── screenshots/
+├── templates/
+│   ├── cloudtrail-template.yaml
+│   ├── guardduty-template.yaml
+│   └── securityhub-template.yaml
+│
+├── .github/workflows/
+│   └── security-scan.yml
 │
 └── LICENSE
+```
 
 ---
 
-🔒 Princípios de Segurança Aplicados
+## 11. Próximos Passos
 
-O projeto foi desenvolvido considerando os pilares fundamentais da Segurança da Informação.
-
-Confidencialidade
-
-Garantir acesso apenas a usuários autorizados.
-
-Integridade
-
-Proteger dados contra alterações indevidas.
-
-Disponibilidade
-
-Garantir acesso contínuo aos sistemas.
-
-Não Repúdio
-
-Registrar e rastrear todas as ações realizadas.
+- **AWS Security Hub:** consolidar os achados do Prowler e GuardDuty em um painel único com score de segurança da organização.
+- **Amazon Macie:** automatizar a descoberta e classificação de dados PII (CPFs, dados de pagamento) em buckets S3, garantindo que nenhum dado sensível esteja fora do escopo protegido.
+- **AWS Config:** monitorar continuamente configurações de recursos para impedir que um bucket S3 seja alterado acidentalmente para acesso público.
+- **Expansão multi-conta:** avaliar migração para AWS IAM Identity Center caso a Vida+ passe a operar múltiplas contas AWS (ambientes de dev/staging/produção separados).
 
 ---
 
-☁️ Modelo de Responsabilidade Compartilhada
+## Competências Demonstradas
 
-Uma das competências fundamentais para profissionais AWS é compreender o modelo de responsabilidade compartilhada.
-
-AWS é responsável por
-
-- Data Centers
-- Hardware
-- Rede Física
-- Virtualização
-- Infraestrutura Global
-
-Cliente é responsável por
-
-- Usuários
-- Permissões
-- Dados
-- Configuração dos serviços
-- Criptografia
-- Governança
-
-Este projeto concentra-se exatamente na camada de responsabilidade do cliente.
+`AWS IAM` · `AWS KMS` · `Amazon S3 (Object Lock)` · `AWS CloudTrail` · `AWS GuardDuty` · `Prowler` · `AWS Systems Manager` · `Governança Cloud` · `LGPD` · `Modelo de Responsabilidade Compartilhada` · `Resposta a Incidentes` · `Arquitetura de Segurança em Camadas`
 
 ---
 
-📊 Benefícios Esperados
+**Autor:** Sérgio Luiz dos Santos — Senior Data Engineer & Cloud Architect | Sistemas Críticos e Governança de Dados
 
-Operacionais
-
-- Redução de erros humanos
-- Monitoramento contínuo
-- Melhor governança
-
-Financeiros
-
-- Redução de custos com incidentes
-- Menor risco de multas
-- Melhor utilização da equipe de TI
-
-Estratégicos
-
-- Proteção da reputação
-- Aumento da confiança dos clientes
-- Escalabilidade segura
-
----
-
-📈 Indicadores de Sucesso
-
-Indicador| Meta
-MFA habilitado| 100%
-Usuários com privilégios excessivos| 0
-Eventos auditados| 100%
-Cobertura de monitoramento| 100%
-Tempo de resposta a incidentes| < 30 min
-
----
-
-🎓 Competências Demonstradas
-
-Este projeto evidencia conhecimentos em:
-
-- Cloud Computing
-- AWS Security
-- AWS IAM
-- AWS CloudTrail
-- AWS Security Hub
-- Governança Cloud
-- Compliance
-- LGPD
-- Gestão de Riscos
-- Arquitetura de Segurança
-
----
-
-🚀 Possíveis Evoluções
-
-Em ambientes corporativos reais a solução poderia ser expandida utilizando:
-
-- AWS GuardDuty
-- AWS Inspector
-- AWS Config
-- AWS WAF
-- AWS Shield
-- AWS Control Tower
-- AWS Organizations
-- Amazon Macie
-
-
-
----
-
-
-# Case Corporativo: Arquitetura de Segurança AWS — Farmácia Vida+
-
-**Foco em Governança, Compliance (LGPD) e Mitigação de Riscos de Negócio**
-
-
-## 1. Introdução & Escopo
-Este documento estabelece o plano estratégico de Segurança da Informação e Arquitetura em Nuvem para a **Farmácia Vida+**, uma rede varejista com operações híbridas (e-commerce e lojas físicas). O escopo deste projeto compreende a proteção do pipeline de dados que trafega receitas médicas, dados cadastrais de clientes (PII) e transações financeiras na AWS, em total conformidade com a LGPD (Lei Geral de Proteção de Dados) e os pilares do *AWS Well-Architected Framework*.
-## 2. O Problema de Negócio (Análise de Risco)
-A falta de controles centralizados e a ausência de trilhas de auditoria expõem a Farmácia Vida+ a três grandes ameaças comerciais:
- * **Vazamento de Dados de Saúde (Dados Sensíveis):** O vazamento de receitas e históricos médicos pode resultar em sanções administrativas e multas da ANPD (Autoridade Nacional de Proteção de Dados) de até 2% do faturamento por infração.
- * **Ataques de Engenharia Social e Sequestro de Credenciais:** Sem uma política estrita de identidades, credenciais administrativas compartilhadas comprometem a integridade operacional da infraestrutura.
- * **Indisponibilidade do Sistema de Vendas:** A falta de detecção proativa de anomalias na nuvem pode paralisar a integração com os caixas das lojas físicas, gerando prejuízos financeiros por minuto de inoperabilidade.
-## 3. O Baseline (O Cenário Atual)
- * **Identidade:** Uso de usuários IAM sem MFA ativado e políticas com permissões excessivas (AdministratorAccess em contas de desenvolvedores).
- * **Visibilidade:** Inexistência de logs centralizados. A equipe de TI não consegue rastrear quem modificou um recurso ou quando houve um acesso anômalo.
- * **Postura:** Segurança baseada em perímetros estáticos (apenas Security Groups), sem análise de comportamento de rede ou detecção de ameaças baseada em Inteligência Artificial.
-## 4. Estratégia da Solução: Implementação e Justificativa Técnica
-Abaixo estão detalhadas as três medidas de engenharia de segurança implementadas para mitigar os riscos de negócio listados.
-### Medida 1: Controle de Acesso Centrado em Identidade (AWS IAM)
- * **Abordagem Técnica:** Implementação do **Princípio do Menor Privilégio** e separação de funções (*Segregation of Duties*).
- * **Mecanismo:**
-   * Fim das contas compartilhadas. Cada funcionário técnico possui uma identidade única federada.
-   * Configuração obrigatória de **MFA (Multi-Factor Authentication)** para todos os usuários através de políticas de controle de serviço (SCPs) no AWS Organizations.
-   * Criação de *IAM Roles* específicas: Atendentes de loja têm acesso restrito de escrita ao banco de dados via API; analistas de BI possuem acesso exclusivo de leitura de dados anonimizados; a exclusão de arquivos de auditoria é explicitamente negada a todos os usuários.
-### Medida 2: Detecção Inteligente de Ameaças (AWS GuardDuty)
- * **Abordagem Técnica:** Monitoramento contínuo da postura de segurança e comportamento do ambiente em tempo real utilizando Machine Learning nativo da nuvem.
- * **Mecanismo:**
-   * Ativação do **AWS GuardDuty** em nível organizacional para analisar logs do AWS CloudTrail, VPC Flow Logs e DNS Logs.
-   * Detecção automatizada de comportamentos anômalos, como tentativas de força bruta em instâncias, acessos à API da AWS vindos de IPs maliciosos conhecidos (redes TOR/Botnets) ou exfiltração de dados incomum no Amazon S3.
-   * Integração com alertas críticos para resposta imediata a incidentes.
-### Medida 3: Auditoria Imutável e Rastreabilidade (AWS CloudTrail)
- * **Abordagem Técnica:** Garantia do princípio do **Não Repúdio** e conformidade com auditorias de segurança (ISO 27001 / LGPD).
- * **Mecanismo:**
-   * Criação de um *Trail* organizacional que registra todas as chamadas de API feitas na conta (quem solicitou, de qual IP, qual recurso foi afetado e qual foi a resposta).
-   * Armazenamento dos logs em um Bucket Amazon S3 isolado na conta de segurança, com criptografia de ponta a ponta via AWS KMS (Key Management Service).
-   * Ativação do **S3 Log File Integrity Validation** e **S3 Object Lock** em modo *Compliance*, impedindo que invasores ou administradores mal-intencionados apaguem ou alterem os registros de log para esconder suas ações.
-## 5. Mapeamento da Tríade de Segurança da Informação (CIA + N)
-Para provar o valor estratégico do projeto, a infraestrutura foi mapeada diretamente com os pilares fundamentais de segurança:
-| Pilar de Segurança | Risco de Negócio Associado | Serviço AWS Adotado | Mecanismo de Proteção |
-|---|---|---|---|
-| **Confidencialidade** | Vazamento de receitas médicas e dados de clientes. | **AWS IAM & AWS KMS** | Controle restrito de acessos e criptografia de chaves para que apenas usuários autorizados decifrem os dados. |
-| **Integridade** | Alteração fraudulenta de logs operacionais ou dados fiscais. | **AWS CloudTrail (File Validation)** | Assinaturas criptográficas garantem que os arquivos de log não sofreram adulteração desde sua gravação. |
-| **Disponibilidade** | Queda do sistema de vendas por ataques direcionados. | **AWS GuardDuty** | Identificação prévia de varreduras de portas ou instâncias comprometidas, permitindo isolamento rápido antes do downtime. |
-| **Não Repúdio** | Um usuário negar ter realizado uma ação crítica no sistema. | **AWS CloudTrail** | Trilha histórica imutável que vincula de forma inequívoca a identidade digital à ação executada na nuvem. |
-## 6. Modelo de Responsabilidade Compartilhada na Prática
-O sucesso deste projeto FAANG baseia-se no entendimento claro das fronteiras de segurança:
- * **Segurança DA Nuvem (Responsabilidade da AWS):** A AWS assegura a proteção física dos data centers, do hardware e do software de virtualização que rodam o IAM, o CloudTrail e o GuardDuty.
- * **Segurança NA Nuvem (Responsabilidade da Farmácia Vida+):** Cabe a nós configurar adequadamente as políticas do IAM, ativar o MFA, definir as chaves de criptografia do KMS, habilitar o Object Lock no S3 e agir prontamente sobre os alertas gerados pelo GuardDuty.
-## 7. Resultados Esperados & Retorno sobre o Investimento (ROI)
- 1. **Risco de Multas Zerado no Escopo:** Mitigação proativa de vazamentos na camada de infraestrutura, blindando a marca contra sanções econômicas da LGPD.
- 2. **Tempo de Resposta a Incidentes (MTTR):** Redução do tempo de identificação de uma invasão de horas para minutos através dos alertas automatizados do GuardDuty.
- 3. **Auditoria Automatizada:** Redução de custos operacionais com equipes de auditoria, uma vez que toda a infraestrutura gera evidências automatizadas e imutáveis em conformidade com as regulamentações vigentes.
-## 8. Próximos Passos (Evolução da Postura)
- * **AWS Security Hub:** Consolidar os achados do GuardDuty em um painel unificado com o Score de segurança da organização.
- * **Amazon Macie:** Automatizar a descoberta e classificação de dados PII (CPFs, Nomes, Cartões) dentro dos Buckets S3 para garantir que nenhum dado sensível foi armazenado fora do local correto.
- * **AWS Config:** Monitorar continuamente as configurações dos recursos para garantir que nenhum desenvolvedor altere acidentalmente um Bucket S3 para o modo "público".
-
----
-**Autor:** Sérgio Santos — Cientista de Dados | Ambientes Críticos e Governança de Dados
-
-[![Portfólio Sérgio Santos](https://img.shields.io/badge/Portfólio-Sérgio_Santos-111827?style=for-the-badge&logo=githubpages&logoColor=00eaff)](https://portfoliosantossergio.vercel.app)
-[![LinkedIn Sérgio Santos](https://img.shields.io/badge/LinkedIn-Sérgio_Santos-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/santossergioluiz)
-
-
----
-
-
-
-
+[![Portfólio](https://img.shields.io/badge/Portfólio-Sérgio_Santos-111827?style=for-the-badge&logo=githubpages&logoColor=00eaff)](https://portfoliosantossergio.vercel.app)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Sérgio_Santos-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/santossergioluiz)
