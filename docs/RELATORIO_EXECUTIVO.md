@@ -1,7 +1,7 @@
 # RELATÓRIO EXECUTIVO DE SEGURANÇA E CONFORMIDADE AWS
 **Postura de Segurança para Operações Farmacêuticas Híbridas**
 
-**Data:** 11 de Junho de 2026  
+**Data:** 12 de Junho de 2026  
 **Empresa Fictícia:** Drogaria Alfa (Grupo Abstergo Industries)  
 **Responsável Técnico:** Sergio Luiz dos Santos (Senior Systems Analyst / Cloud Security Practitioner)  
 **Escopo do Ambiente:** 1 Conta AWS (Workload de Produção), Região us-east-1 (N. Virginia)  
