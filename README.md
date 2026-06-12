@@ -1,3 +1,10 @@
+## Formação AWS Cloud Practitioner Certification.
+
+<img width="122" height="120" alt="1000127470" src="https://github.com/user-attachments/assets/30bc674a-68d1-4fcb-ae8d-bed9baca297e" />
+
+
+---
+
 ## 🔐 A Importância da Segurança AWS
 
 Implementação de Controles de Segurança para uma Farmácia em Ambiente Cloud
@@ -14,7 +21,7 @@ Implementação de Controles de Segurança para uma Farmácia em Ambiente Cloud
 
 A segurança da informação é um dos pilares fundamentais da computação em nuvem.
 
-Este projeto foi desenvolvido como parte da formação AWS Cloud Practitioner, com o objetivo de demonstrar a aplicação prática de serviços AWS voltados para proteção de ambientes corporativos.
+Este projeto foi desenvolvido como parte da formação AWS Cloud Practitioner Certification, com o objetivo de demonstrar a aplicação prática de serviços AWS voltados para proteção de ambientes corporativos.
 
 O cenário proposto considera uma farmácia fictícia chamada Farmácia VidaPlus, que armazena informações sensíveis de clientes, receitas médicas, dados financeiros e registros operacionais.
 
