@@ -14,7 +14,7 @@ Implementação de Controles de Segurança para uma Farmácia em Ambiente Cloud
 
 A segurança da informação é um dos pilares fundamentais da computação em nuvem.
 
-Este projeto foi desenvolvido como parte da formação AWS Cloud Practitioner Certification, com o objetivo de demonstrar a aplicação prática de serviços AWS voltados para proteção de ambientes corporativos.
+Este projeto foi desenvolvido como parte da formação AWS Cloud Practitioner, com o objetivo de demonstrar a aplicação prática de serviços AWS voltados para proteção de ambientes corporativos.
 
 O cenário proposto considera uma farmácia fictícia chamada Farmácia VidaPlus, que armazena informações sensíveis de clientes, receitas médicas, dados financeiros e registros operacionais.
 
@@ -330,39 +330,9 @@ Em ambientes corporativos reais a solução poderia ser expandida utilizando:
 - AWS Organizations
 - Amazon Macie
 
----
-
-👨‍💻 Autor
-
-Sérgio Santos
-
-Profissional de Tecnologia da Informação com experiência em:
-
-- Análise de Sistemas
-- Desenvolvimento de Software
-- Infraestrutura
-- Segurança da Informação
-- Computação em Nuvem
-
-Formação AWS Cloud Practitioner Certification.
-
----
-
-📜 Licença
-
-Projeto desenvolvido para fins educacionais e demonstração de competências em AWS Cloud Security.
-
-MIT License.
-
-
-
-
-
 
 
 ---
----
-
 
 
 # Case Corporativo: Arquitetura de Segurança AWS — Farmácia Vida+
