@@ -1,4 +1,4 @@
-🔐 A Importância da Segurança AWS
+## 🔐 A Importância da Segurança AWS
 
 Implementação de Controles de Segurança para uma Farmácia em Ambiente Cloud
 
@@ -421,5 +421,16 @@ O sucesso deste projeto FAANG baseia-se no entendimento claro das fronteiras de 
  * **AWS Security Hub:** Consolidar os achados do GuardDuty em um painel unificado com o Score de segurança da organização.
  * **Amazon Macie:** Automatizar a descoberta e classificação de dados PII (CPFs, Nomes, Cartões) dentro dos Buckets S3 para garantir que nenhum dado sensível foi armazenado fora do local correto.
  * **AWS Config:** Monitorar continuamente as configurações dos recursos para garantir que nenhum desenvolvedor altere acidentalmente um Bucket S3 para o modo "público".
+
+---
+**Autor:** Sérgio Santos — Cientista de Dados | Ambientes Críticos e Governança de Dados
+
+[![Portfólio Sérgio Santos](https://img.shields.io/badge/Portfólio-Sérgio_Santos-111827?style=for-the-badge&logo=githubpages&logoColor=00eaff)](https://portfoliosantossergio.vercel.app)
+[![LinkedIn Sérgio Santos](https://img.shields.io/badge/LinkedIn-Sérgio_Santos-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/santossergioluiz)
+
+
+---
+
+
 
 
